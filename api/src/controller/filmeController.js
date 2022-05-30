@@ -1,4 +1,4 @@
-import { alterarImagem, inserirFilme } from '../repository/filmeRepository.js'
+import { alterarImagem, inserirFilme, listarTodosFilmes, buscarPorId, buscarPorNome } from '../repository/filmeRepository.js'
 
 import multer from 'multer'
 
@@ -52,6 +52,54 @@ server.put('/filme/:id/capa' , upload.single('capa'), async (req, resp) => {
         
     }
 })
+
+
+server.get('/filme' , async (req, resp) => {
+    try {
+        const resposta = await listarTodosFilmes();
+        resp.send(resposta); 
+    } catch (err) {
+        resp.status(400).send({
+            erro:err.message
+        })
+    }
+})
+
+
+server.get('/filme/busca' , async (req, resp) => {
+    try {
+        const { nome } = req.query;
+
+        const resposta = await buscarPorNome(nome);
+
+        if(resposta.length == 0) resp.status(404).send([]) 
+        else
+        resp.send(resposta); 
+    } catch (err) {
+        resp.status(400).send({
+            erro:err.message
+        })
+    }
+})
+
+
+server.get('/filme/:id' , async (req, resp) => {
+    try {
+        const { id } = req.params;
+
+        const resposta = await buscarPorId(id);
+
+        if(!resposta) throw new Error  ('Filme não encontrado.') 
+
+        resp.send(resposta); 
+    } catch (err) {
+        resp.status(400).send({
+            erro:err.message
+        })
+    }
+})
+
+
 
 
 
