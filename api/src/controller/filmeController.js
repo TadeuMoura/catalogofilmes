@@ -72,7 +72,8 @@ server.get('/filme/busca' , async (req, resp) => {
 
         const resposta = await buscarPorNome(nome);
 
-        if(resposta.length == 0) resp.status(404).send([]) 
+        if(resposta.length == 0) 
+        resp.status(404).send(['filme não encontrado']) 
         else
         resp.send(resposta); 
     } catch (err) {
