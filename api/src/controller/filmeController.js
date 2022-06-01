@@ -2,7 +2,7 @@ import { alterarImagem, inserirFilme, listarTodosFilmes, buscarPorId, buscarPorN
 
 import multer from 'multer'
 
-import{ Router } from 'express'
+import{ Router } from 'express' 
 
 const server = Router();
 const upload = multer({ dest: 'storage/capasFilmes' })
