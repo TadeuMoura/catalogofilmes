@@ -1,4 +1,4 @@
-import { alterarImagem, inserirFilme, listarTodosFilmes, buscarPorId, buscarPorNome, removerFilme } from '../repository/filmeRepository.js'
+import { alterarImagem, inserirFilme, listarTodosFilmes, buscarPorId, buscarPorNome, removerFilme, alterarFilme } from '../repository/filmeRepository.js'
 
 import multer from 'multer'
 
@@ -21,7 +21,7 @@ server.post('/filme' , async (req, resp) => {
 
         if(!novoFilme.lancamento) throw new Error ('Lançamento do filme é obrigatório');
 
-        if(!novoFilme.disponivel) throw new Error ('Disponibilidade do filme é obrigatória');
+        if(novoFilme.disponivel == undefined) throw new Error ('Disponibilidade do filme é obrigatória');
 
         if(!novoFilme.usuario) throw new Error ('Usuário não logado');
 
@@ -117,5 +117,38 @@ server.delete('/filme/:id' , async (req, resp) => {
     }
 })
 
+
+server.put('/filme/:id' , async (req, resp) => {
+    try {
+        const { id } = req.params;
+        const filme = req.body;
+
+
+        if(!filme.nome) throw new Error ('Nome do filme é obrigatório');
+
+        if(!filme.sinopse) throw new Error ('Sinopse do filme é obrigatória');
+
+        if(filme.avaliacao == undefined || filme.avaliacao < 0) throw new Error ('Avaliacao do filme é obrigatória');
+
+        if(!filme.lancamento) throw new Error ('Lançamento do filme é obrigatório');
+
+        if(filme.disponivel == undefined) throw new Error ('Disponibilidade do filme é obrigatória');
+
+        if(!filme.usuario) throw new Error ('Usuário não logado');
+
+
+        const resposta = await alterarFilme(id, filme);
+        if (resposta != 1)
+            throw new Error ('Filme não pode ser alterado');
+        else
+            resp.status(204).send();
+
+
+    } catch (err) {
+        resp.status(404).send({
+            erro: err.message
+        })
+    }
+})
 
 export default server;
